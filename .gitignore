@@ -1,0 +1,28 @@
+# Secrets (ne jamais publier)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+id_rsa*
+id_ed25519*
+*.kdbx
+
+# Fichiers de machines virtuelles VMware (lourds et inutiles sur GitHub)
+*.iso
+*.vmdk
+*.vmx
+*.vmxf
+*.vmsd
+*.vmem
+*.vmss
+*.nvram
+*.log
+*.lck/
+
+# Système
+Thumbs.db
+desktop.ini
+.DS_Store
