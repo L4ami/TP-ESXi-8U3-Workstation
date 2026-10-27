@@ -2,8 +2,8 @@
 
 > [!NOTE]
 > - **Travaux pratiques :** Virtualisation
-> - **Auteur :** Lami · **Date :** 26 octobre 2026
-> - **Objectif :** installer un hyperviseur de type 1 (ESXi 8.0 U3) dans une machine virtuelle VMware Workstation, puis l'administrer depuis l'interface web ESXi Host Client.
+> - **Auteur :** Lami · **Date :** 26 et 27 octobre 2026
+> - **Objectif :** installer un hyperviseur de type 1 (ESXi 8.0 U3) dans une machine virtuelle VMware Workstation, puis l'administrer de deux façons : depuis l'interface web ESXi Host Client et en ligne de commande via SSH.
 
 ---
 
@@ -16,9 +16,10 @@
 5. [Installation d'ESXi](#5-installation-desxi)
 6. [Premier démarrage et console DCUI](#6-premier-démarrage-et-console-dcui)
 7. [Accès à l'interface web ESXi Host Client](#7-accès-à-linterface-web-esxi-host-client)
-8. [Problème rencontré et résolution](#8-problème-rencontré-et-résolution)
-9. [Bilan](#9-bilan)
-10. [Glossaire](#10-glossaire)
+8. [Connexion en SSH](#8-connexion-en-ssh)
+9. [Problème rencontré et résolution](#9-problème-rencontré-et-résolution)
+10. [Bilan](#10-bilan)
+11. [Glossaire](#11-glossaire)
 
 ---
 
@@ -140,7 +141,7 @@ L'assistant lit l'ISO et reconnaît automatiquement le système invité, ce qui 
 
 *Capture 10 : récapitulatif avant création.*
 
-Dans **Personnaliser le matériel → Processeurs**, l'option **Virtualiser Intel VT-x/EPT ou AMD-V/RVI** est laissée **décochée** (voir [section 8](#8-problème-rencontré-et-résolution)).
+Dans **Personnaliser le matériel → Processeurs**, l'option **Virtualiser Intel VT-x/EPT ou AMD-V/RVI** est laissée **décochée** (voir [section 9](#9-problème-rencontré-et-résolution)).
 
 ![VT-x/EPT décoché](captures/11-vm-vtx-decoche.png)
 
@@ -248,7 +249,79 @@ Lecture du tableau de bord :
 
 ---
 
-## 8. Problème rencontré et résolution
+## 8. Connexion en SSH
+
+**SSH** (*Secure Shell*) permet d'administrer un serveur à distance **en ligne de commande**, à travers une connexion **chiffrée**. Là où le Host Client se pilote à la souris, SSH donne accès au shell d'ESXi et à ses outils (`esxcli`, `vim-cmd`…), indispensables pour l'automatisation et le dépannage.
+
+> [!IMPORTANT]
+> Sur ESXi, le service SSH est **désactivé par défaut** pour des raisons de sécurité. On l'active uniquement le temps de l'intervention.
+
+### 8.1 Activer le service SSH
+
+Dans le Host Client : **Hôte → Gérer → onglet Services**, rechercher `ssh`, sélectionner **TSM-SSH** puis **Démarrer**.
+
+![Service TSM-SSH démarré](captures/22-esxi-service-ssh-demarre.png)
+
+*Capture 22 : TSM-SSH « En cours d'exécution » (TSM = *Tech Support Mode*), tâche « Start Service » terminée.*
+
+### 8.2 Se connecter depuis Windows
+
+Windows 11 intègre un client SSH (OpenSSH). Dans une invite de commandes :
+
+```
+ssh root@192.168.190.140
+```
+
+`root@192.168.190.140` signifie : se connecter avec le compte **root** sur la machine **192.168.190.140**.
+
+![Empreinte à la première connexion](captures/23-ssh-empreinte-premiere-connexion.png)
+
+*Capture 23 : à la première connexion, le client affiche l'**empreinte** (fingerprint) de la clé du serveur.*
+
+> [!TIP]
+> L'empreinte est l'identité unique du serveur. En répondant `yes`, le PC l'enregistre dans son fichier `known_hosts`. Si un autre serveur tentait ensuite de se faire passer pour l'ESXi, l'empreinte différerait et SSH bloquerait la connexion (protection contre l'attaque de l'homme du milieu).
+
+> [!NOTE]
+> Lors du premier essai, la question est restée plusieurs minutes sans réponse : ESXi a fermé la connexion (« Connection closed »), car il limite le temps accordé pour s'authentifier. Une nouvelle tentative a suffi, l'empreinte étant déjà enregistrée.
+
+Le mot de passe saisi ne s'affiche pas à l'écran (pas même d'astérisques), c'est normal.
+
+![Connexion SSH réussie](captures/24-ssh-connexion-reussie.png)
+
+*Capture 24 : connexion établie. L'invite `[root@localhost:~]` indique que les commandes s'exécutent désormais sur l'ESXi. ESXi rappelle que toutes les commandes sont journalisées.*
+
+### 8.3 Commandes de vérification
+
+```
+vmware -vl
+esxcli network ip interface ipv4 get
+```
+
+![Commandes vmware et esxcli](captures/25-ssh-commandes-esxcli.png)
+
+*Capture 25 : résultat des commandes.*
+
+| Commande | Résultat | Explication |
+|---|---|---|
+| `vmware -vl` | VMware ESXi 8.0 Update 3, build 24022510 | version exacte de l'hyperviseur |
+| `esxcli network ip interface ipv4 get` | vmk0 · 192.168.190.140 · 255.255.255.0 · passerelle 192.168.190.2 · DHCP | **vmk0** est l'interface d'administration (VMkernel) d'ESXi. La passerelle 192.168.190.2 est le routeur NAT de Workstation |
+
+On quitte la session avec la commande `exit`.
+
+### 8.4 Désactiver SSH après utilisation
+
+Retour dans **Hôte → Gérer → Services** : sélectionner **TSM-SSH** puis **Arrêter**.
+
+![Service TSM-SSH arrêté](captures/26-esxi-service-ssh-arrete.png)
+
+*Capture 26 : TSM-SSH « Arrêté », tâche « Stop Service » terminée.*
+
+> [!WARNING]
+> **Bonne pratique de sécurité :** ne laisser SSH actif que pendant l'intervention. Un service SSH ouvert en permanence est une porte d'entrée supplémentaire pour un attaquant.
+
+---
+
+## 9. Problème rencontré et résolution
 
 ### Symptôme
 
@@ -278,19 +351,20 @@ Sans VT-x virtualisé, ESXi est installé et administrable, mais **il ne peut pa
 
 ---
 
-## 9. Bilan
+## 10. Bilan
 
 - ✅ VM Workstation dimensionnée selon les exigences d'ESXi 8 (4 cœurs, 8 Go, 142 Go)
 - ✅ ESXi 8.0 Update 3 installé et démarré
 - ✅ Adresse IP obtenue par DHCP (192.168.190.140)
 - ✅ Administration à distance via ESXi Host Client
+- ✅ Connexion en ligne de commande via SSH, puis désactivation du service
 - ✅ Problème de virtualisation imbriquée diagnostiqué et contourné
 
-**Compétences mises en œuvre :** différence entre hyperviseurs de type 1 et 2, dimensionnement d'une VM, modes réseau de Workstation, provisionnement thin/thick, installation et premier accès à un hôte ESXi, diagnostic d'un conflit entre Hyper-V et Workstation.
+**Compétences mises en œuvre :** différence entre hyperviseurs de type 1 et 2, dimensionnement d'une VM, modes réseau de Workstation, provisionnement thin/thick, installation et premier accès à un hôte ESXi, administration en SSH et commandes `esxcli`, diagnostic d'un conflit entre Hyper-V et Workstation.
 
 ---
 
-## 10. Glossaire
+## 11. Glossaire
 
 | Terme | Définition |
 |---|---|
@@ -306,5 +380,9 @@ Sans VT-x virtualisé, ESXi est installé et administrable, mais **il ne peut pa
 | **DCUI** | *Direct Console User Interface*, console locale d'ESXi |
 | **Host Client** | interface web d'administration d'un hôte ESXi |
 | **vCenter Server** | outil de gestion centralisée de plusieurs hôtes ESXi |
+| **SSH** | *Secure Shell*, protocole d'administration à distance en ligne de commande, chiffré |
+| **Empreinte (fingerprint)** | identifiant unique de la clé d'un serveur SSH, vérifié à chaque connexion |
+| **esxcli** | outil en ligne de commande pour configurer et interroger ESXi |
+| **vmk0** | première interface réseau VMkernel d'ESXi, utilisée pour l'administration |
 | **Datastore** | espace de stockage où ESXi range les fichiers des VM |
 | **OSDATA** | partition système d'ESXi 8 (journaux, outils, données internes) |
