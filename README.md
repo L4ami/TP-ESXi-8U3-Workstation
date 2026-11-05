@@ -2,7 +2,7 @@
 
 > [!NOTE]
 > - **Travaux pratiques :** Virtualisation
-> - **Auteur :** Lami · **Date :** 26 et 27 octobre 2026
+> - **Auteur :** Paul Giocanti · **Date :** 26 et 27 octobre 2026
 > - **Objectif :** installer un hyperviseur de type 1 (ESXi 8.0 U3) dans une machine virtuelle VMware Workstation, puis l'administrer de deux façons : depuis l'interface web ESXi Host Client et en ligne de commande via SSH.
 
 ---
