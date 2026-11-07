@@ -14,7 +14,7 @@
 | **Période** | du 2 au 6 novembre 2026 |
 | **Formateur** | Morrad Belrhali |
 
-> ⚠️ **État du rendu : rapport d'avancement.** Ce document présente le travail réalisé du 2 au 4 novembre 2026. Les tâches 1 et 5 sont terminées et validées. Les tâches suivantes (vCenter, cluster, HA, vMotion, Storage vMotion, SDRS…) n'ont pas encore été réalisées : leur état est indiqué honnêtement dans le tableau de la section 4 et dans le tableau de validation (section 8).
+> ⚠️ **État du rendu : rapport d'avancement.** Ce document présente le travail réalisé du 2 au 4 novembre 2026. Les tâches 1 et 5 sont terminées et validées. Les tâches suivantes (vCenter, cluster, HA, vMotion, Storage vMotion, SDRS…) n'ont pas encore été réalisées : leur état est indiqué honnêtement dans le tableau de la section 4 et dans le tableau de validation (section 10).
 
 ---
 
