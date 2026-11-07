@@ -1,0 +1,12 @@
+# Fichiers système
+Thumbs.db
+desktop.ini
+.DS_Store
+# Images ISO et disques de VM (trop lourds, jamais dans le dépôt)
+*.iso
+*.vmdk
+*.ova
+# Secrets
+.env
+*.key
+*.pem
