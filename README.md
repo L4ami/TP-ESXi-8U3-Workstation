@@ -1,29 +1,47 @@
-# Installation de VMware ESXi 8.0 Update 3 sous VMware Workstation Pro
+# 🖥️ Installer VMware ESXi 8.0 U3 dans une VM et l'administrer (web + SSH)
 
-> [!NOTE]
-> - **Travaux pratiques :** Virtualisation
-> - **Auteur :** Paul Giocanti · **Date :** 26 et 27 octobre 2026
-> - **Objectif :** installer un hyperviseur de type 1 (ESXi 8.0 U3) dans une machine virtuelle VMware Workstation, puis l'administrer de deux façons : depuis l'interface web ESXi Host Client et en ligne de commande via SSH.
+![VMware ESXi](https://img.shields.io/badge/VMware_ESXi-8.0_U3-607078?logo=vmware&logoColor=white)
+![VMware Workstation](https://img.shields.io/badge/VMware_Workstation_Pro-25.0.1-607078?logo=vmware&logoColor=white)
+![Windows 11](https://img.shields.io/badge/h%C3%B4te-Windows_11_Pro-0078D4?logo=windows&logoColor=white)
+![Administration](https://img.shields.io/badge/admin-Host_Client_%2B_SSH-1F6FEB)
+![Statut](https://img.shields.io/badge/statut-termin%C3%A9-brightgreen)
+
+> **En une phrase :** j'ai installé l'hyperviseur professionnel **VMware ESXi 8.0 U3** dans une machine virtuelle de mon PC portable, puis je l'ai administré depuis son **interface web** et en **ligne de commande (SSH)**.
+
+Ce dépôt est écrit pour être compris **même sans rien connaître** à ESXi : tous les mots techniques sont expliqués (voir le glossaire en fin de page).
+👉 La même documentation, prête pour HackMD (images en liens absolus) : [`hackmd-TP-ESXi-8U3.md`](hackmd-TP-ESXi-8U3.md)
+
+> Projet réalisé pendant la semaine de formation **Virtualisation** (module 190), classe E1B, Geneva Institute of Technology (GIT), les 26 et 27 octobre 2026.
+
+## ✅ Résultats
+
+| Test | Résultat |
+|---|---|
+| Installation | ✅ ESXi 8.0 Update 3 (build 24022510) installé et démarré dans une VM de 4 cœurs, 8 Go de RAM, 142 Go de disque |
+| Réseau | ✅ adresse IP obtenue par DHCP (192.168.190.140) |
+| Interface web (ESXi Host Client) | ✅ connexion et tableau de bord accessibles |
+| Ligne de commande | ✅ connexion SSH, commandes `esxcli`, puis service SSH coupé après usage |
+| Virtualisation imbriquée | ⚠️ VT-x non transmis à la VM (conflit avec la sécurité VBS de Windows) : ESXi fonctionne, mais ne peut pas lancer de VM 64 bits |
 
 ---
 
-## Sommaire
+## 🗂️ Sommaire
 
-1. [Contexte et notions clés](#1-contexte-et-notions-clés)
-2. [Environnement de travail](#2-environnement-de-travail)
-3. [Vérification des prérequis](#3-vérification-des-prérequis)
-4. [Création de la machine virtuelle](#4-création-de-la-machine-virtuelle)
-5. [Installation d'ESXi](#5-installation-desxi)
-6. [Premier démarrage et console DCUI](#6-premier-démarrage-et-console-dcui)
-7. [Accès à l'interface web ESXi Host Client](#7-accès-à-linterface-web-esxi-host-client)
-8. [Connexion en SSH](#8-connexion-en-ssh)
-9. [Problème rencontré et résolution](#9-problème-rencontré-et-résolution)
-10. [Bilan](#10-bilan)
-11. [Glossaire](#11-glossaire)
+1. [Contexte et notions clés](#-1-contexte-et-notions-clés)
+2. [Environnement de travail](#-2-environnement-de-travail)
+3. [Vérification des prérequis](#-3-vérification-des-prérequis)
+4. [Création de la machine virtuelle](#-4-création-de-la-machine-virtuelle)
+5. [Installation d'ESXi](#-5-installation-desxi)
+6. [Premier démarrage et console DCUI](#-6-premier-démarrage-et-console-dcui)
+7. [Accès à l'interface web ESXi Host Client](#-7-accès-à-linterface-web-esxi-host-client)
+8. [Connexion en SSH](#-8-connexion-en-ssh)
+9. [Problème rencontré et résolution](#-9-problème-rencontré-et-résolution)
+10. [Bilan](#-10-bilan)
+11. [Glossaire](#-11-glossaire)
 
 ---
 
-## 1. Contexte et notions clés
+## 📖 1. Contexte et notions clés
 
 **VMware ESXi** est un **hyperviseur de type 1** (dit *bare-metal*) : il s'installe directement sur le matériel d'un serveur, sans système d'exploitation intermédiaire. Il sert à héberger et faire tourner de nombreuses machines virtuelles en entreprise.
 
@@ -39,7 +57,7 @@ Dans ce TP, faute de serveur physique dédié, ESXi est installé **dans une VM 
 
 ---
 
-## 2. Environnement de travail
+## 💻 2. Environnement de travail
 
 | Élément | Valeur |
 |---|---|
@@ -52,7 +70,7 @@ Dans ce TP, faute de serveur physique dédié, ESXi est installé **dans une VM 
 
 ---
 
-## 3. Vérification des prérequis
+## 🔍 3. Vérification des prérequis
 
 ESXi 8 exige au minimum **2 cœurs CPU** et **8 Go de RAM**. La VM empruntant ses ressources au PC hôte, on vérifie d'abord que celui-ci peut suivre, et que la **virtualisation matérielle** (Intel VT-x) est activée dans le BIOS.
 
@@ -70,7 +88,7 @@ Version de Workstation (**Aide → À propos de VMware Workstation**) :
 
 ---
 
-## 4. Création de la machine virtuelle
+## 🏗️ 4. Création de la machine virtuelle
 
 **Fichier → Nouvelle machine virtuelle → Personnalisé (avancé)**.
 
@@ -141,7 +159,7 @@ L'assistant lit l'ISO et reconnaît automatiquement le système invité, ce qui 
 
 *Capture 10 : récapitulatif avant création.*
 
-Dans **Personnaliser le matériel → Processeurs**, l'option **Virtualiser Intel VT-x/EPT ou AMD-V/RVI** est laissée **décochée** (voir [section 9](#9-problème-rencontré-et-résolution)).
+Dans **Personnaliser le matériel → Processeurs**, l'option **Virtualiser Intel VT-x/EPT ou AMD-V/RVI** est laissée **décochée** (voir [section 9](#-9-problème-rencontré-et-résolution)).
 
 ![VT-x/EPT décoché](captures/11-vm-vtx-decoche.png)
 
@@ -160,7 +178,7 @@ Dans **Personnaliser le matériel → Processeurs**, l'option **Virtualiser Inte
 
 ---
 
-## 5. Installation d'ESXi
+## ⚙️ 5. Installation d'ESXi
 
 Mise sous tension de la VM : l'installeur démarre depuis l'ISO.
 
@@ -206,7 +224,7 @@ Puis `Entrée` → **Reboot**.
 
 ---
 
-## 6. Premier démarrage et console DCUI
+## 🖥️ 6. Premier démarrage et console DCUI
 
 ESXi démarre désormais depuis son disque. On arrive sur la **DCUI** (*Direct Console User Interface*), la console locale du serveur.
 
@@ -222,7 +240,7 @@ ESXi démarre désormais depuis son disque. On arrive sur la **DCUI** (*Direct C
 
 ---
 
-## 7. Accès à l'interface web ESXi Host Client
+## 🌐 7. Accès à l'interface web ESXi Host Client
 
 Depuis le navigateur du PC hôte : `https://192.168.190.140`.
 
@@ -249,7 +267,7 @@ Lecture du tableau de bord :
 
 ---
 
-## 8. Connexion en SSH
+## 🔐 8. Connexion en SSH
 
 **SSH** (*Secure Shell*) permet d'administrer un serveur à distance **en ligne de commande**, à travers une connexion **chiffrée**. Là où le Host Client se pilote à la souris, SSH donne accès au shell d'ESXi et à ses outils (`esxcli`, `vim-cmd`…), indispensables pour l'automatisation et le dépannage.
 
@@ -321,7 +339,7 @@ Retour dans **Hôte → Gérer → Services** : sélectionner **TSM-SSH** puis *
 
 ---
 
-## 9. Problème rencontré et résolution
+## ⚠️ 9. Problème rencontré et résolution
 
 ### Symptôme
 
@@ -351,7 +369,7 @@ Sans VT-x virtualisé, ESXi est installé et administrable, mais **il ne peut pa
 
 ---
 
-## 10. Bilan
+## 🧠 10. Bilan
 
 - ✅ VM Workstation dimensionnée selon les exigences d'ESXi 8 (4 cœurs, 8 Go, 142 Go)
 - ✅ ESXi 8.0 Update 3 installé et démarré
@@ -364,7 +382,7 @@ Sans VT-x virtualisé, ESXi est installé et administrable, mais **il ne peut pa
 
 ---
 
-## 11. Glossaire
+## 📚 11. Glossaire
 
 | Terme | Définition |
 |---|---|
@@ -386,3 +404,18 @@ Sans VT-x virtualisé, ESXi est installé et administrable, mais **il ne peut pa
 | **vmk0** | première interface réseau VMkernel d'ESXi, utilisée pour l'administration |
 | **Datastore** | espace de stockage où ESXi range les fichiers des VM |
 | **OSDATA** | partition système d'ESXi 8 (journaux, outils, données internes) |
+
+---
+
+## 📁 Contenu du dépôt
+
+| Élément | Contenu |
+|---|---|
+| `README.md` | ce compte-rendu |
+| `hackmd-TP-ESXi-8U3.md` | la même documentation, au format HackMD |
+| `captures/` | les captures d'écran du TP (01 à 26, plus l'annexe sur l'erreur VT-x) |
+
+---
+
+**Auteur :** Paul Giocanti ([@L4ami](https://github.com/L4ami)) · Octobre 2026<br>
+CFC d'informaticien + Bachelor (double certification) · Geneva Institute of Technology
