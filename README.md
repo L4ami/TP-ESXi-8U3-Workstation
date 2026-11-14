@@ -8,7 +8,7 @@
 
 > **En une phrase :** j'ai installé l'hyperviseur professionnel **VMware ESXi 8.0 U3** dans une machine virtuelle de mon PC portable, puis je l'ai administré depuis son **interface web** et en **ligne de commande (SSH)**.
 
-Ce dépôt est écrit pour être compris **même sans rien connaître** à ESXi : tous les mots techniques sont expliqués (voir le glossaire en fin de page).
+Ce dépôt est écrit pour être compris **même sans rien connaître** à ESXi : tous les mots techniques sont expliqués (voir le glossaire en fin de page).<br>
 👉 La même documentation, prête pour HackMD (images en liens absolus) : [`hackmd-TP-ESXi-8U3.md`](hackmd-TP-ESXi-8U3.md)
 
 > Projet réalisé pendant la semaine de formation **Virtualisation** (module 190), classe E1B, Geneva Institute of Technology (GIT), les 26 et 27 octobre 2026.
@@ -30,12 +30,12 @@ Ce dépôt est écrit pour être compris **même sans rien connaître** à ESXi 
 1. [Contexte et notions clés](#-1-contexte-et-notions-clés)
 2. [Environnement de travail](#-2-environnement-de-travail)
 3. [Vérification des prérequis](#-3-vérification-des-prérequis)
-4. [Création de la machine virtuelle](#-4-création-de-la-machine-virtuelle)
-5. [Installation d'ESXi](#-5-installation-desxi)
-6. [Premier démarrage et console DCUI](#-6-premier-démarrage-et-console-dcui)
+4. [Création de la machine virtuelle](#%EF%B8%8F-4-création-de-la-machine-virtuelle)
+5. [Installation d'ESXi](#%EF%B8%8F-5-installation-desxi)
+6. [Premier démarrage et console DCUI](#%EF%B8%8F-6-premier-démarrage-et-console-dcui)
 7. [Accès à l'interface web ESXi Host Client](#-7-accès-à-linterface-web-esxi-host-client)
 8. [Connexion en SSH](#-8-connexion-en-ssh)
-9. [Problème rencontré et résolution](#-9-problème-rencontré-et-résolution)
+9. [Problème rencontré et résolution](#%EF%B8%8F-9-problème-rencontré-et-résolution)
 10. [Bilan](#-10-bilan)
 11. [Glossaire](#-11-glossaire)
 
@@ -159,7 +159,7 @@ L'assistant lit l'ISO et reconnaît automatiquement le système invité, ce qui 
 
 *Capture 10 : récapitulatif avant création.*
 
-Dans **Personnaliser le matériel → Processeurs**, l'option **Virtualiser Intel VT-x/EPT ou AMD-V/RVI** est laissée **décochée** (voir [section 9](#-9-problème-rencontré-et-résolution)).
+Dans **Personnaliser le matériel → Processeurs**, l'option **Virtualiser Intel VT-x/EPT ou AMD-V/RVI** est laissée **décochée** (voir [section 9](#%EF%B8%8F-9-problème-rencontré-et-résolution)).
 
 ![VT-x/EPT décoché](captures/11-vm-vtx-decoche.png)
 
